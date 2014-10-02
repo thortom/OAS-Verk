@@ -47,8 +47,8 @@ public:
         Iy = 18.0, Iz = 18.0, Ix = 0.0;  // Ix value not right, and not needed for matM.
         Xud = m - 19, Yvd = m - 34, Zwd = m - 34, Kpd = Ix - 0.04, Mqd = Iy - 2.1, Nrd = Iz - 2.1, zG = 0.18/m, ZG = zG;
 
-        Xu = 2.4, Yv = 23, Zw = 23, Kp = 0.3, Mq = 9.7, Nr = 9.7, Yr = -11.5, Zq = 11.5, Mw = -3.1, Nv = 3.1;
-        Xuu = 2.4, Yvv = 80, Zww = 80, Kpp = 0.0006, Mqq = 9.1, Nrr = 9.1, Zqq = 0.3, Yrr = -0.3, Mww = -3.1, Nvv = 3.1;
+        Xu = -2.4, Yv = -23, Zw = -23, Kp = -0.3, Mq = -9.7, Nr = -9.7, Yr = 11.5, Zq = -11.5, Mw = 3.1, Nv = -3.1;
+        Xuu = -2.4, Yvv = -80, Zww = -80, Kpp = -0.0006, Mqq = -9.1, Nrr = -9.1, Zqq = -0.3, Yrr = 0.3, Mww = 3.1, Nvv = -3.1;
 
         seaDensity = 1.028, airfoilArea = 0.03*0.04, radiusBlade = 0.04, xRudder = 0.9674;         // airfoilArea, radiusBlade and xRudde are estimates. xRudder is the rudders x distance from center of the AUV.
 
@@ -69,11 +69,11 @@ public:
 
         
         double initL[6*6] = {0, 0, 0, 0, 0, 0,
-                            0, -30*u0, 0, 0, 0, 7.7*u0,
-                            0, 0, -30*u0, 0, -7.7*u0, 0,
+                            0, 30*u0, 0, 0, 0, -7.7*u0,
+                            0, 0, 30*u0, 0, 7.7*u0, 0,
                             0, 0, 0, 0, 0, 0,
-                            0, 0, -9.9*u0, 0, -3.1*u0, 0,
-                            0, 9.9*u0, 0, 0, 0, -3.1*u0};
+                            0, 0, 9.9*u0, 0, 3.1*u0, 0,
+                            0, -9.9*u0, 0, 0, 0, 3.1*u0};
 
         insertToMatrix(matL, initL);
 
@@ -93,12 +93,13 @@ public:
                             0};
         insertToMatrix(matg, initg);
 
-        double initC[6*6] = {0, 0, 0, 0.18*r0, 34*w0, -34*v0,
-                            0, 0, 0, -34*w0, 0.18*r0, 19*u0,
-                            0, 0, 0, -0.18*p0 + 34*v0, -0.18*q0 - 19*u0, 0,
-                            -0.18*r0, 34*w0, 0.18*p0 - 34*v0, 0, 2.1*r0, -2.1*q0,
-                            -34*w0, -0.18*r0, 0.18*q0 + 19*u0, -2.1*r0, 0, 0.04*p0,
-                            34*v0, -19*u0, 0, 2.1*q0, -0.04*p0, 0};
+        // ATH skoða betur gildin fyrir breytistærðinar í C
+        double initC[6*6] = {0, 0, 0, m*zG*r0, (m-Zwd)*w0, -(m-Yvd)*v0,
+                            0, 0, 0, -(m-Zwd)*w0, m*zG*r0, (m-Xud)*u0,
+                            0, 0, 0, -m*ZG*p0+(m-Yvd)*v0, -m*ZG*q0-(m-Xud)*u0, 0,
+                            -m*zG*r0, (m-Zwd)*w0, m*ZG*p0-(m-Yvd)*v0, 0, (Iz-Nrd)*r0, -(Iy-Mqd)*q0,
+                            -(m-Zwd)*w0, -m*zG*r0, m*ZG*q0+(m-Xud)*u0, -(Iz-Nrd)*r0, 0, (Ix-Kpd)*p0,
+                            (m-Yvd)*v0, -(m-Xud)*u0, 0, (Iy-Mqd)*q0, -(Ix-Kpd)*p0, 0};
         insertToMatrix(matC, initC);
 
         double initD[6*6] = {-Xu - Xuu*abs(u0), 0, 0, 0, 0, 0,
@@ -196,11 +197,11 @@ int main(int argc, char **argv)
     {
         rk4.do_step(model , v , t , dt);
         file << t << ',' << v(0,0) << ',' << v(1,0) << ',' << v(2,0) << ',' << v(3,0) << ',' << v(4,0) << ',' << v(5,0) << endl;
-        model.input(0, 0, 0, 0, 0);
+        model.input(surge/0.0025, 0, 0, 0, 0);
     }
     file.close();
 
-
+    /*
     cout << "M" << endl;
     printMatrix(model.matM);
     cout << endl;
@@ -238,7 +239,7 @@ int main(int argc, char **argv)
     cout << "input" << endl;
     printMatrix(model.matInput);
     cout << endl;
-
+    */
 
     return 0;
 }
