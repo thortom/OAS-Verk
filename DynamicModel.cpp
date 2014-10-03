@@ -44,7 +44,7 @@ public:
     {
         // Initializing the matrixes needed for the Dynamic Model of the AUV
         m = 46.27, W = 453.5, B = 454.5;                                         // W - B should be approximately 1N
-        Iy = 18.0, Iz = 18.0, Ix = 0.0;  // I values goten from simulator see I0
+        Iy = 18.0, Iz = 18.0, Ix = 0.0;  // I values gotten from simulator see I0 matrix
         Xud = m - 19, Yvd = m - 34, Zwd = m - 34, Kpd = Ix - 0.04, Mqd = Iy - 2.1, Nrd = Iz - 2.1, zG = 0.1, ZG = zG;
 
         Xu = -2.4, Yv = -23, Zw = -23, Kp = -0.3, Mq = -9.7, Nr = -9.7, Yr = 11.5, Zq = -11.5, Mw = 3.1, Nv = -3.1;
@@ -201,7 +201,7 @@ int main(int argc, char **argv)
     }
     file.close();
 
-    /*
+    
     cout << "M" << endl;
     printMatrix(model.matM);
     cout << endl;
@@ -239,7 +239,7 @@ int main(int argc, char **argv)
     cout << "input" << endl;
     printMatrix(model.matInput);
     cout << endl;
-    */
+    
 
     return 0;
 }
