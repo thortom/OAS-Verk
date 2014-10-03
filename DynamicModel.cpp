@@ -43,9 +43,9 @@ public:
     AUVModel() : matM(6, 6), invM(6,6), matL(6, 6), matC(6, 6), matD(6, 6), matg(6, 1), matA(6, 6), matU(6, 1), matTa(6, 1), matK(6, 5), matInput(5, 1)
     {
         // Initializing the matrixes needed for the Dynamic Model of the AUV
-        m = 18.0, W = 176.0, B = 176.0;                                         // W - B should be approximately 1N
-        Iy = 18.0, Iz = 18.0, Ix = 0.0;  // Ix value not right, and not needed for matM.
-        Xud = m - 19, Yvd = m - 34, Zwd = m - 34, Kpd = Ix - 0.04, Mqd = Iy - 2.1, Nrd = Iz - 2.1, zG = 0.18/m, ZG = zG;
+        m = 46.27, W = 453.5, B = 454.5;                                         // W - B should be approximately 1N
+        Iy = 18.0, Iz = 18.0, Ix = 0.0;  // I values goten from simulator see I0
+        Xud = m - 19, Yvd = m - 34, Zwd = m - 34, Kpd = Ix - 0.04, Mqd = Iy - 2.1, Nrd = Iz - 2.1, zG = 0.1, ZG = zG;
 
         Xu = -2.4, Yv = -23, Zw = -23, Kp = -0.3, Mq = -9.7, Nr = -9.7, Yr = 11.5, Zq = -11.5, Mw = 3.1, Nv = -3.1;
         Xuu = -2.4, Yvv = -80, Zww = -80, Kpp = -0.0006, Mqq = -9.1, Nrr = -9.1, Zqq = -0.3, Yrr = 0.3, Mww = 3.1, Nvv = -3.1;
