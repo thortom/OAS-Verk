@@ -7,20 +7,13 @@
 //
 //
 #include <iostream>
-#include <boost/numeric/ublas/matrix.hpp>
-#include <boost/numeric/ublas/lu.hpp>
-#include <boost/numeric/ublas/io.hpp>
-#include <boost/numeric/ublas/assignment.hpp>
-#include "Matrix.cpp"
 #include <fstream>
+#include "Matrix.cpp"
 
-#include <boost/array.hpp>              // not used?
 #include <boost/numeric/odeint.hpp>
 
 using namespace std;
 using namespace boost::numeric::odeint;
-
-using namespace boost::numeric::ublas;
 
 struct streaming_observer
 {

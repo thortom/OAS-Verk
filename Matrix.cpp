@@ -2,13 +2,8 @@
 
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/lu.hpp>
-#include <boost/numeric/ublas/io.hpp>
-
-#include <boost/numeric/ublas/assignment.hpp>   // not used?
-#include <iostream>                             // not used?
 
 using namespace boost::numeric::ublas;
-using namespace std;                            // not used?
 
  /* Matrix inversion routine.
  Uses lu_factorize and lu_substitute in uBLAS to invert a matrix */
@@ -54,9 +49,9 @@ void printMatrix(matrix<double>& mat)
     {
         for(unsigned int j = 0; j < mat.size2(); j++)
         {
-            cout << mat(i,j) << "\t";
+            std::cout << mat(i,j) << "\t";
         }
-        cout << "\n";
+        std::cout << "\n";
     }
 }
 
