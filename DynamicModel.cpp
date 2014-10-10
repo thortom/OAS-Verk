@@ -201,7 +201,7 @@ int main(int argc, char **argv)
     }
     file.close();
 
-    
+    /*
     cout << "M" << endl;
     printMatrix(model.matM);
     cout << endl;
@@ -239,7 +239,7 @@ int main(int argc, char **argv)
     cout << "input" << endl;
     printMatrix(model.matInput);
     cout << endl;
-    
+    */
 
     return 0;
 }
