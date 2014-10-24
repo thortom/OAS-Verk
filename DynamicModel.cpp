@@ -13,22 +13,22 @@
 #include "OdeintIntegrator.h"
 
 
-AUVModel* AUVModel::create(AUVModel& model, double initState[], double initTime, double dt)
+AUVModel* AUVModel::create(AUVModel*& model, double initState[], double initTime, double dt)
 {
   return new OdeintIntegrator(model, initState, initTime , dt);
 }
 
-void AUVModel::dostep(AUVModel& model)
+void AUVModel::dostep(AUVModel*& model)
 {
     std::cout << "AUVModel::dostep, not the correct step though" << std::endl;
 }
 
-void AUVModel::initializeSate(double state[])
+void AUVModel::initializeSate(double velocity[])
 {
-    insertToMatrix(this->state, state);
+    insertToMatrix(this->velocity, velocity);
 }
 
-AUVModel::AUVModel() : matM(6, 6), invM(6,6), matL(6, 6), matC(6, 6), matD(6, 6), matg(6, 1), matA(6, 6), matU(6, 1), matTa(6, 1), matK(6, 5), matInput(5, 1), state(6, 1)
+AUVModel::AUVModel() : matM(6, 6), invM(6,6), matL(6, 6), matC(6, 6), matD(6, 6), matg(6, 1), matA(6, 6), matU(6, 1), matTa(6, 1), matK(6, 5), matInput(5, 1), velocity(6, 1), matJ(6, 6), position(6, 1)
 {
     // Initializing the matrixes needed for the Dynamic Model of the AUV
     m = 46.27, W = 453.5, B = 454.5;                                         // W - B should be approximately 1N
@@ -110,7 +110,10 @@ AUVModel::AUVModel() : matM(6, 6), invM(6,6), matL(6, 6), matC(6, 6), matD(6, 6)
                          0, 0, 0, -xRudder*fLift, -xRudder*fLift,
                          0, -xRudder*fLift, -xRudder*fLift, 0, 0};
     insertToMatrix(matK, initK);
-        
+
+    //double initJ[6*6] = {cos(0)*cos(0)} // TODO
+    //insertToMatrix(matJ, initJ);
+   
     // probably not needed
     double initInput[5*1] = {0, 0, 0, 0, 0};
     insertToMatrix(matInput, initInput);
@@ -133,9 +136,16 @@ boost::numeric::ublas::matrix<double> AUVModel::getMatTa()
     return matTa;
 }
 
+boost::numeric::ublas::matrix<double> AUVModel::getMatJ()
+{
+    matJ(0,0) = cos(position(5, 1))*cos(position(4, 1)); // TODO: finish matJ
+}
+
 void AUVModel::operator() ( const boost::numeric::ublas::matrix<double> &v , boost::numeric::ublas::matrix<double> &dvdt , double t)
 {
     dvdt = prod(matA, v) + prod(invM, getMatTa() - matg);
+    //dndt = prod(matJ, dvdt);                          // TODO: make get() functions for velocity and position
+    //position = position + dndt;
 }
 
 struct streaming_observer

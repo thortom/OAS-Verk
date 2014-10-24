@@ -16,18 +16,19 @@ public:
     AUVModel();
     virtual ~AUVModel() {/*std::cout << "AUVModel destructor" << std::endl;*/}
 
-    virtual void dostep(AUVModel& model);
-    AUVModel* create(AUVModel& model, double initState[], double initTime, double dt);
-    void initializeSate(double state[]);
+    virtual void dostep(AUVModel*& model);
+    AUVModel* create(AUVModel*& model, double initState[], double initTime, double dt);
+    void initializeSate(double velocity[]);
 
     void input(double rpm, double finUp, double finDown, double finStb, double finPort);
 
     boost::numeric::ublas::matrix<double> getMatTa();
+    boost::numeric::ublas::matrix<double> getMatJ();
 
     void operator() ( const boost::numeric::ublas::matrix<double> &v , boost::numeric::ublas::matrix<double> &dvdt , double t);
 
-    boost::numeric::ublas::matrix<double> matM, invM, matL, matC, matD, matg, matA, matU, matTa, matK, matInput;
-    boost::numeric::ublas::matrix<double> state;
+    boost::numeric::ublas::matrix<double> matM, invM, matL, matC, matD, matg, matA, matU, matTa, matK, matInput, matJ, n;
+    boost::numeric::ublas::matrix<double> velocity, position;
 
     double m, W, B;
     double Iy, Iz, Ix;

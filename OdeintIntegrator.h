@@ -8,19 +8,19 @@ class OdeintIntegrator : public AUVModel
 {
 public:
     OdeintIntegrator();
-    OdeintIntegrator(AUVModel& model, double state[], double time , double dt)
+    OdeintIntegrator(AUVModel*& model, double velocity[], double time , double dt)
     {
-        model.initializeSate(state);
+        model->initializeSate(velocity);
         this->time = time;
         this->dt = dt;
     }
 
     ~OdeintIntegrator() {/*std::cout << "OdeintIntegrator destructor" << std::endl;*/}
 
-    virtual void dostep(AUVModel& model)
+    virtual void dostep(AUVModel*& model)
     {
         //std::cout << model.matInput(0,0) << "\t" << model.matInput(1,0) << "\t" << model.matInput(2,0) << "\t" << model.matInput(3,0) << "\t" << model.matInput(4,0) << std::endl; 
-        integrator.do_step(model , model.state , time , dt);
+        integrator.do_step(*model, model->velocity , time , dt);
         time += dt;   
     }
 
