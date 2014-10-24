@@ -13,17 +13,22 @@
 #include "OdeintIntegrator.h"
 
 
-AUVModel* AUVModel::create(AUVModel& model, boost::numeric::ublas::matrix<double>& initState, double initTime, double dt)
+AUVModel* AUVModel::create(AUVModel& model, double initState[], double initTime, double dt)
 {
   return new OdeintIntegrator(model, initState, initTime , dt);
 }
 
-boost::numeric::ublas::matrix<double> AUVModel::dostep()
+void AUVModel::dostep(AUVModel& model)
 {
-    std::cout << "AUVModel::dostep" << std::endl;
+    std::cout << "AUVModel::dostep, not the correct step though" << std::endl;
 }
 
-AUVModel::AUVModel() : matM(6, 6), invM(6,6), matL(6, 6), matC(6, 6), matD(6, 6), matg(6, 1), matA(6, 6), matU(6, 1), matTa(6, 1), matK(6, 5), matInput(5, 1)
+void AUVModel::initializeSate(double state[])
+{
+    insertToMatrix(this->state, state);
+}
+
+AUVModel::AUVModel() : matM(6, 6), invM(6,6), matL(6, 6), matC(6, 6), matD(6, 6), matg(6, 1), matA(6, 6), matU(6, 1), matTa(6, 1), matK(6, 5), matInput(5, 1), state(6, 1)
 {
     // Initializing the matrixes needed for the Dynamic Model of the AUV
     m = 46.27, W = 453.5, B = 454.5;                                         // W - B should be approximately 1N
