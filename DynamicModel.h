@@ -16,7 +16,7 @@ public:
     AUVModel();
 
     virtual boost::numeric::ublas::matrix<double> dostep();
-    AUVModel* create(AUVModel& model, boost::numeric::ublas::matrix<double> initState, double initTime, double dt);
+    AUVModel* create(AUVModel& model, boost::numeric::ublas::matrix<double>& initState, double initTime, double dt);
 
     void input(double rpm, double finUp, double finDown, double finStb, double finPort);
 

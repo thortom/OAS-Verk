@@ -13,7 +13,7 @@
 #include "OdeintIntegrator.h"
 
 
-AUVModel* AUVModel::create(AUVModel& model, boost::numeric::ublas::matrix<double> initState, double initTime, double dt)
+AUVModel* AUVModel::create(AUVModel& model, boost::numeric::ublas::matrix<double>& initState, double initTime, double dt)
 {
   return new OdeintIntegrator(model, initState, initTime , dt);
 }

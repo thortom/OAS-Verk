@@ -8,7 +8,7 @@ class OdeintIntegrator : public AUVModel
 {
 public:
     OdeintIntegrator();
-    OdeintIntegrator(AUVModel& model, boost::numeric::ublas::matrix<double> state, double time , double dt) : state(6, 1)
+    OdeintIntegrator(AUVModel& model, boost::numeric::ublas::matrix<double>& state, double time , double dt) : state(6, 1)
     {
         this->model = model;
         this->state = state;

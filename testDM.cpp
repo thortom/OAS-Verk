@@ -1,8 +1,6 @@
 #include <iostream>
 #include <fstream>
-//#include "Matrix.h"
 #include "DynamicModel.h"
-//#include "DynamicModel.cpp"
 
 
 int main(int argc, char **argv)
