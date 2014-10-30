@@ -14,6 +14,7 @@ class AUVModel
 {
 public:
     AUVModel();
+    //AUVModel(const AUVModel& test) {std::cout << "hello" << std::endl;}
     virtual ~AUVModel() {/*std::cout << "AUVModel destructor" << std::endl;*/}
 
     virtual void dostep(AUVModel*& model);

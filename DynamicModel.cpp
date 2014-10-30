@@ -138,7 +138,10 @@ boost::numeric::ublas::matrix<double> AUVModel::getMatTa()
 
 boost::numeric::ublas::matrix<double> AUVModel::getMatJ()
 {
-    matJ(0,0) = cos(position(5, 1))*cos(position(4, 1)); // TODO: finish matJ
+    //matJ(0,0) = cos(position(5, 1))*cos(position(4, 1)); // TODO: finish matJ
+    //matJ(0,1) = ...
+    //matJ(0,2) = ...
+    //...
 }
 
 void AUVModel::operator() ( const boost::numeric::ublas::matrix<double> &v , boost::numeric::ublas::matrix<double> &dvdt , double t)
