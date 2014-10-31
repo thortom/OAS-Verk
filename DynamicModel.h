@@ -14,8 +14,11 @@ class AUVModel
 {
 public:
     AUVModel();
+    AUVModel(double initState[], double initTime, double dt);
     //AUVModel(const AUVModel& test) {std::cout << "hello" << std::endl;}
-    virtual ~AUVModel() {/*std::cout << "AUVModel destructor" << std::endl;*/}
+    virtual ~AUVModel() {/*TODO*/}
+
+    void doWork();
 
     virtual void dostep(AUVModel*& model);
     AUVModel* create(AUVModel*& model, double initState[], double initTime, double dt);
@@ -26,10 +29,29 @@ public:
     boost::numeric::ublas::matrix<double> getMatTa();
     boost::numeric::ublas::matrix<double> getMatJ();
 
-    void operator() ( const boost::numeric::ublas::matrix<double> &v , boost::numeric::ublas::matrix<double> &dvdt , double t);
+    void operator() (const boost::numeric::ublas::matrix<double>& velocity , boost::numeric::ublas::matrix<double> &dvdt , double t);
+
+    // get functions for velocity components
+    double surge() {return velocity(0,0);}
+    double sway() {return velocity(1,0);}
+    double heave() {return velocity(2,0);}
+    double roll() {return velocity(3,0);}
+    double pitch() {return velocity(4,0);}
+    double yaw() {return velocity(5,0);}
+
+    // get functions for position components
+    double xPos()     {return x;}
+    double yPos()     {return y;}
+    double zPos()     {return z;}
+    double phiRads()   {return phi;}
+    double thetaRads() {return theta;}
+    double psiRads()   {return psi;}
 
     boost::numeric::ublas::matrix<double> matM, invM, matL, matC, matD, matg, matA, matU, matTa, matK, matInput, matJ, n;
     boost::numeric::ublas::matrix<double> velocity, position;
+    boost::numeric::ublas::matrix<double> dndt;
+
+    AUVModel* integrator;
 
     double m, W, B;
     double Iy, Iz, Ix;
@@ -40,20 +62,27 @@ public:
 
     double seaDensity, airfoilArea, radiusBlade, xRudder;
 
-    double u0;
-    double v0;
-    double w0;
-    double p0;
-    double q0;
-    double r0;
+    double u;
+    double v;
+    double w;
+    double p;
+    double q;
+    double r;
 
-    double theta0;
-    double phi0;
+    double x;
+    double y;
+    double z;
+    double phi;
+    double theta;
+    double psi;
 
     double finUp;
     double finDown;
     double finStb;
     double finPort;
+
+private:
+    void updateStateValues();
 };
 
 void insertToMatrix(boost::numeric::ublas::matrix<double>& mat, double vec[]);
