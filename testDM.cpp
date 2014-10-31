@@ -17,10 +17,11 @@ int main(int argc, char **argv)
     file << "t" << ',' << "u" << ',' << "v" << ',' << "w" << ',' << "p" << ',' << "q" << ',' << "r" << std::endl;
     for(size_t i=0 ; i<30 ; ++i,t+=dt )
     {
-        integrator->dostep(model);      // TODO: change to model->doWork() {integrator->dostep(model), updatePos } 
+        integrator->dostep(model);      // TODO: change to model->doWork() {integrator->dostep(model), updatePos }
+        //model->updatePosition();
         //model->doWork();
         file << t << ',' << model->surge() << ',' << model->sway() << ',' << model->heave() << ',' << model->roll() << ',' << model->pitch() << ',' << model->yaw() << std::endl;
-        //std::cout << t << '\t' << model->surge() << '\t' << model->sway() << '\t' << model->heave() << '\t' << model->roll() << '\t' << model->pitch() << '\t' << model->yaw() << '\t' << model->xPos() << std::endl;        
+        std::cout << t << '\t' << model->surge() << '\t' << model->sway() << '\t' << model->heave() << '\t' << model->roll() << '\t' << model->pitch() << '\t' << model->yaw() << '\t' << model->xPos() << std::endl;        
         model->input(surge/0.0025, 0, 0, 0, 0);
     }
     file.close();

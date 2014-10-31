@@ -14,7 +14,6 @@ class AUVModel
 {
 public:
     AUVModel();
-    AUVModel(double initState[], double initTime, double dt);
     //AUVModel(const AUVModel& test) {std::cout << "hello" << std::endl;}
     virtual ~AUVModel() {/*TODO*/}
 
@@ -80,9 +79,6 @@ public:
     double finDown;
     double finStb;
     double finPort;
-
-private:
-    void updateStateValues();
 };
 
 void insertToMatrix(boost::numeric::ublas::matrix<double>& mat, double vec[]);

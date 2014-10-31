@@ -28,7 +28,7 @@ public:
     double time;
     double dt;
 
-//private:    
+private:    
     boost::numeric::odeint::runge_kutta4< boost::numeric::ublas::matrix<double> > integrator;
     
 };

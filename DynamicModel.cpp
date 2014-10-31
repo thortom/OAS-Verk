@@ -158,7 +158,12 @@ boost::numeric::ublas::matrix<double> AUVModel::getMatTa()
 
 boost::numeric::ublas::matrix<double> AUVModel::getMatJ()
 {
-    updateStateValues();
+    u = velocity(0, 0);
+    v = velocity(1, 0);
+    w = velocity(2, 0);
+    p = velocity(3, 0);
+    q = velocity(4, 0);
+    r = velocity(5, 0);
     matJ(0, 0) = cos(psi)*cos(theta); matJ(0, 1) = cos(psi)*sin(theta)*sin(phi)-sin(psi)*cos(phi); matJ(0, 2) = sin(psi)*sin(phi)+cos(psi)*cos(phi)*sin(theta);
     matJ(1, 0) = sin(psi)*cos(theta); matJ(1, 1) = cos(psi)*cos(phi)+sin(phi)*sin(theta)*sin(psi); matJ(1, 2) = sin(theta)*sin(psi)*cos(phi)-cos(psi)*sin(phi);
     matJ(2, 0) = -sin(theta);         matJ(2, 1) = cos(theta)*sin(phi);                            matJ(2, 2) = cos(theta)*cos(phi);
@@ -171,8 +176,13 @@ boost::numeric::ublas::matrix<double> AUVModel::getMatJ()
 void AUVModel::operator() ( const boost::numeric::ublas::matrix<double>& velocity , boost::numeric::ublas::matrix<double> &dvdt , double t)
 {
     dvdt = prod(matA, velocity) + prod(invM, getMatTa() - matg);
-    //dndt = prod(matJ, dvdt);                          // TODO: make get() functions for velocity and position
-    /*
+}
+
+/*
+void AUVModel::updatePosition()
+{
+    dndt = prod(getMatJ(), dvdt);
+    
     // Integrate the change in position
     x     = x + dndt(0, 0);
     y     = y + dndt(1, 0);
@@ -180,27 +190,8 @@ void AUVModel::operator() ( const boost::numeric::ublas::matrix<double>& velocit
     phi   = phi + dndt(3, 0);
     theta = theta + dndt(4, 0);
     psi   = psi + dndt(5, 0);
-    */
 }
-
-// TODO: delete this is not needed
-void AUVModel::updateStateValues()
-{
-    // TODO: check if the values change accordingly
-    u = velocity(0, 0);
-    v = velocity(1, 0);
-    w = velocity(2, 0);
-    p = velocity(3, 0);
-    q = velocity(4, 0);
-    r = velocity(5, 0);
-
-    //x     = position(0, 0);
-    //y     = position(1, 0);
-    //z     = position(2, 0);
-    //phi   = position(3, 0);
-    //theta = position(4, 0);
-    //psi   = position(5, 0);
-}
+*/
 
 struct streaming_observer
 {
