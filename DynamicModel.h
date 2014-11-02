@@ -46,7 +46,7 @@ public:
     double thetaRads() {return theta;}
     double psiRads()   {return psi;}
 
-    boost::numeric::ublas::matrix<double> matM, invM, matL, matC, matD, matg, matA, matU, matTa, matK, matInput, matJ, n;
+    boost::numeric::ublas::matrix<double> matM, invM, matL, matC, matD, matg, matA, matA11, matA12, matB, matU, matTa, matK, matInput, matJ, n;
     boost::numeric::ublas::matrix<double> velocity, position;
     boost::numeric::ublas::matrix<double> dndt;
 

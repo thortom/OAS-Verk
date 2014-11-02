@@ -9,8 +9,21 @@
 #include <iostream>
 #include <boost/numeric/odeint.hpp>         // this uses the "new boost" boost_1_56_0
 #include "DynamicModel.h"
-
 #include "OdeintIntegrator.h"
+
+#include <boost/numeric/ublas/io.hpp>
+
+void printMatrix(boost::numeric::ublas::matrix<double>& mat)
+{
+    for(unsigned int i = 0; i < mat.size1(); i++) 
+    {
+        for(unsigned int j = 0; j < mat.size2(); j++)
+        {
+            std::cout << mat(i,j) << "\t";
+        }
+        std::cout << "\n";
+    }
+}
 
 
 AUVModel* AUVModel::create(AUVModel*& model, double initState[], double initTime, double dt)
@@ -36,7 +49,7 @@ void AUVModel::doWork()
 }
 
 //double initState[]=0, double initTime=0, double dt=0
-AUVModel::AUVModel() : matM(6, 6), invM(6,6), matL(6, 6), matC(6, 6), matD(6, 6), matg(6, 1), matA(6, 6), matU(6, 1), matTa(6, 1), matK(6, 5), matInput(5, 1), velocity(6, 1), matJ(6, 6), position(6, 1)
+AUVModel::AUVModel() : matM(6, 6), invM(6,6), matL(6, 6), matC(6, 6), matD(6, 6), matg(6, 1), matA(12, 12), matA11(6, 6), matA12(6, 6), matB(12, 6), matU(6, 1), matTa(6, 1), matK(6, 5), matInput(5, 1), velocity(6, 1), matJ(6, 6), position(6, 1)
 {
     //insertToMatrix(velocity, initState);
     //integrator = new OdeintIntegrator(this, initState, initTime , dt);
@@ -88,6 +101,7 @@ AUVModel::AUVModel() : matM(6, 6), invM(6,6), matL(6, 6), matC(6, 6), matD(6, 6)
                         0, 0, 0, 0, 0, Iz - Nrd};
     insertToMatrix(matM, initM);
 
+    // TODO: Use Thor Fossens G matrix
     double initg[6*1] = {(W - B)*sin(theta),
                         -(W - B)*cos(theta)*sin(phi),
                         -(W - B)*cos(theta)*cos(phi),
@@ -115,7 +129,10 @@ AUVModel::AUVModel() : matM(6, 6), invM(6,6), matL(6, 6), matC(6, 6), matD(6, 6)
 
     InvertMatrix(matM, invM);
 
-    matA = -prod(invM, matC + matD + matL);
+    matA11 = -prod(invM, matC + matD + matL);
+    // TODO: Fix matA12
+    //matA12 = -prod(invM, matg);
+    matA12 = invM;
 
     double fLift = 1/2*seaDensity*airfoilArea*radiusBlade*radiusBlade*2*3.1415;
     double initK[6*5] = {0.000095, 0, 0, 0, 0,                                  // K_prop = 0.000095 ~= 1/2*seaDesity*airfoilArea*r^2_blade*sin(attackAngle)
@@ -133,7 +150,14 @@ AUVModel::AUVModel() : matM(6, 6), invM(6,6), matL(6, 6), matC(6, 6), matD(6, 6)
                          0, 0, 0, 0, cos(phi)           , -sin(phi),
                          0, 0, 0, 0, sin(phi)/cos(theta), cos(phi)/cos(theta) };
     insertToMatrix(matJ, initJ);
-   
+
+
+    subrange(matA, 0,6, 0,6) = matA11;
+    subrange(matA, 0,6, 6,12) = matA12;
+    subrange(matA, 6,12, 0,6) = matJ;
+    subrange(matB, 0,6, 0,6) = invM;
+    printMatrix(matB);
+
     // probably not needed/The user should start with an input.
     double initInput[5*1] = {0, 0, 0, 0, 0};
     insertToMatrix(matInput, initInput);
@@ -175,7 +199,7 @@ boost::numeric::ublas::matrix<double> AUVModel::getMatJ()
 
 void AUVModel::operator() ( const boost::numeric::ublas::matrix<double>& velocity , boost::numeric::ublas::matrix<double> &dvdt , double t)
 {
-    dvdt = prod(matA, velocity) + prod(invM, getMatTa() - matg);
+    dvdt = prod(matA11, velocity) + prod(invM, getMatTa() - matg);
 }
 
 /*
@@ -218,17 +242,7 @@ void insertToMatrix(boost::numeric::ublas::matrix<double>& mat, double vec[])
         }
 }
 
-void printMatrix(boost::numeric::ublas::matrix<double>& mat)
-{
-    for(unsigned int i = 0; i < mat.size1(); i++) 
-    {
-        for(unsigned int j = 0; j < mat.size2(); j++)
-        {
-            std::cout << mat(i,j) << "\t";
-        }
-        std::cout << "\n";
-    }
-}
+
 
 
 
