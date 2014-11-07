@@ -36,9 +36,9 @@ void AUVModel::dostep(AUVModel*& model)
     std::cout << "AUVModel::dostep, not the correct step though" << std::endl;
 }
 
-void AUVModel::initializeSate(double velocity[])
+void AUVModel::initializeSate(double state[])
 {
-    insertToMatrix(this->velocity, velocity);
+    insertToMatrix(this->state, state);
 }
 
 
@@ -49,9 +49,10 @@ void AUVModel::doWork()
 }
 
 //double initState[]=0, double initTime=0, double dt=0
-AUVModel::AUVModel() : matM(6, 6), invM(6,6), matL(6, 6), matC(6, 6), matD(6, 6), matg(6, 1), matA(12, 12), matA11(6, 6), matA12(6, 6), matB(12, 6), matU(6, 1), matTa(6, 1), matK(6, 5), matInput(5, 1), velocity(6, 1), matJ(6, 6), position(6, 1)
+AUVModel::AUVModel() : matM(6, 6), invM(6,6), matL(6, 6), matC(6, 6), matD(6, 6), matg(6, 1), matA(12, 12), matA11(6, 6), matA12(6, 6), matB(12, 6), matTa(6, 1), matK(6, 5),
+matInput(5, 1), matJ(6, 6), position(6, 1), matG(6, 6), state(12, 1)
 {
-    //insertToMatrix(velocity, initState);
+    //insertToMatrix(state, initState);
     //integrator = new OdeintIntegrator(this, initState, initTime , dt);
 
     // Initializing the matrixes needed for the Dynamic Model of the AUV
@@ -102,6 +103,7 @@ AUVModel::AUVModel() : matM(6, 6), invM(6,6), matL(6, 6), matC(6, 6), matD(6, 6)
     insertToMatrix(matM, initM);
 
     // TODO: Use Thor Fossens G matrix
+    /*
     double initg[6*1] = {(W - B)*sin(theta),
                         -(W - B)*cos(theta)*sin(phi),
                         -(W - B)*cos(theta)*cos(phi),
@@ -109,6 +111,17 @@ AUVModel::AUVModel() : matM(6, 6), invM(6,6), matL(6, 6), matC(6, 6), matD(6, 6)
                         zG*W*sin(theta),
                         0};
     insertToMatrix(matg, initg);
+    */
+
+    // This G matrix is from Guidance and Control of Ocean Vehicles, Thor I. Fossen on page 101.
+    // Set zB = xG = xB = yG = yB = 0
+    double initG[6*6] = {0, 0, 0,   0,  W-B, 0,
+                        0, 0, 0, -(W-B), 0,  0,
+                        0, 0, 0,    0,   0,  0,
+                        0, 0, 0, zG*W,   0,  0,
+                        0, 0, 0,    0, zG*W, 0,
+                        0, 0, 0,    0,   0,  0};
+    insertToMatrix(matG, initG);
 
     // ATH skoða betur gildin fyrir breytistærðinar í C
     double initC[6*6] = {0, 0, 0, m*zG*r, (m-Zwd)*w, -(m-Yvd)*v,
@@ -130,9 +143,7 @@ AUVModel::AUVModel() : matM(6, 6), invM(6,6), matL(6, 6), matC(6, 6), matD(6, 6)
     InvertMatrix(matM, invM);
 
     matA11 = -prod(invM, matC + matD + matL);
-    // TODO: Fix matA12
-    //matA12 = -prod(invM, matg);
-    matA12 = invM;
+    matA12 = -prod(invM, matG);
 
     double fLift = 1/2*seaDensity*airfoilArea*radiusBlade*radiusBlade*2*3.1415;
     double initK[6*5] = {0.000095, 0, 0, 0, 0,                                  // K_prop = 0.000095 ~= 1/2*seaDesity*airfoilArea*r^2_blade*sin(attackAngle)
@@ -156,7 +167,6 @@ AUVModel::AUVModel() : matM(6, 6), invM(6,6), matL(6, 6), matC(6, 6), matD(6, 6)
     subrange(matA, 0,6, 6,12) = matA12;
     subrange(matA, 6,12, 0,6) = matJ;
     subrange(matB, 0,6, 0,6) = invM;
-    printMatrix(matB);
 
     // probably not needed/The user should start with an input.
     double initInput[5*1] = {0, 0, 0, 0, 0};
@@ -182,12 +192,12 @@ boost::numeric::ublas::matrix<double> AUVModel::getMatTa()
 
 boost::numeric::ublas::matrix<double> AUVModel::getMatJ()
 {
-    u = velocity(0, 0);
-    v = velocity(1, 0);
-    w = velocity(2, 0);
-    p = velocity(3, 0);
-    q = velocity(4, 0);
-    r = velocity(5, 0);
+    u = state(0, 0);
+    v = state(1, 0);
+    w = state(2, 0);
+    p = state(3, 0);
+    q = state(4, 0);
+    r = state(5, 0);
     matJ(0, 0) = cos(psi)*cos(theta); matJ(0, 1) = cos(psi)*sin(theta)*sin(phi)-sin(psi)*cos(phi); matJ(0, 2) = sin(psi)*sin(phi)+cos(psi)*cos(phi)*sin(theta);
     matJ(1, 0) = sin(psi)*cos(theta); matJ(1, 1) = cos(psi)*cos(phi)+sin(phi)*sin(theta)*sin(psi); matJ(1, 2) = sin(theta)*sin(psi)*cos(phi)-cos(psi)*sin(phi);
     matJ(2, 0) = -sin(theta);         matJ(2, 1) = cos(theta)*sin(phi);                            matJ(2, 2) = cos(theta)*cos(phi);
@@ -197,25 +207,10 @@ boost::numeric::ublas::matrix<double> AUVModel::getMatJ()
     return matJ;
 }
 
-void AUVModel::operator() ( const boost::numeric::ublas::matrix<double>& velocity , boost::numeric::ublas::matrix<double> &dvdt , double t)
+void AUVModel::operator() ( const boost::numeric::ublas::matrix<double>& x , boost::numeric::ublas::matrix<double> &dxdt , double t)
 {
-    dvdt = prod(matA11, velocity) + prod(invM, getMatTa() - matg);
+    dxdt = prod(matA, x) + prod(matB, getMatTa());//prod(matA11, x) + prod(invM, getMatTa() - matg);
 }
-
-/*
-void AUVModel::updatePosition()
-{
-    dndt = prod(getMatJ(), dvdt);
-    
-    // Integrate the change in position
-    x     = x + dndt(0, 0);
-    y     = y + dndt(1, 0);
-    z     = z + dndt(2, 0);
-    phi   = phi + dndt(3, 0);
-    theta = theta + dndt(4, 0);
-    psi   = psi + dndt(5, 0);
-}
-*/
 
 struct streaming_observer
 {

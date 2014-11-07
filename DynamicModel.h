@@ -21,34 +21,34 @@ public:
 
     virtual void dostep(AUVModel*& model);
     AUVModel* create(AUVModel*& model, double initState[], double initTime, double dt);
-    void initializeSate(double velocity[]);
+    void initializeSate(double state[]);
 
     void input(double rpm, double finUp, double finDown, double finStb, double finPort);
 
     boost::numeric::ublas::matrix<double> getMatTa();
+    boost::numeric::ublas::matrix<double> getMatU();
     boost::numeric::ublas::matrix<double> getMatJ();
 
-    void operator() (const boost::numeric::ublas::matrix<double>& velocity , boost::numeric::ublas::matrix<double> &dvdt , double t);
+    void operator() (const boost::numeric::ublas::matrix<double>& x , boost::numeric::ublas::matrix<double> &dxdt , double t);
 
-    // get functions for velocity components
-    double surge() {return velocity(0,0);}
-    double sway() {return velocity(1,0);}
-    double heave() {return velocity(2,0);}
-    double roll() {return velocity(3,0);}
-    double pitch() {return velocity(4,0);}
-    double yaw() {return velocity(5,0);}
+    // get functions for state components
+    double surge() {return state(0,0);}
+    double sway() {return state(1,0);}
+    double heave() {return state(2,0);}
+    double roll() {return state(3,0);}
+    double pitch() {return state(4,0);}
+    double yaw() {return state(5,0);}
 
     // get functions for position components
-    double xPos()     {return x;}
-    double yPos()     {return y;}
-    double zPos()     {return z;}
-    double phiRads()   {return phi;}
-    double thetaRads() {return theta;}
-    double psiRads()   {return psi;}
+    double xPos()     {return state(6,0);}
+    double yPos()     {return state(7,0);}
+    double zPos()     {return state(8,0);}
+    double phiRads()   {return state(9,0);}
+    double thetaRads() {return state(10,0);}
+    double psiRads()   {return state(11,0);}
 
-    boost::numeric::ublas::matrix<double> matM, invM, matL, matC, matD, matg, matA, matA11, matA12, matB, matU, matTa, matK, matInput, matJ, n;
-    boost::numeric::ublas::matrix<double> velocity, position;
-    boost::numeric::ublas::matrix<double> dndt;
+    boost::numeric::ublas::matrix<double> matM, invM, matL, matC, matD, matg, matA, matA11, matA12, matB, matTa, matK, matInput, matJ, n, matG, state;
+    boost::numeric::ublas::matrix<double> position;
 
     AUVModel* integrator;
 
