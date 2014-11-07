@@ -182,8 +182,11 @@ void AUVModel::input(double rpm, double finUp, double finDown, double finStb, do
     matInput(3, 0) = finStb;
     matInput(4, 0) = finPort;
     matInput = matInput*rpm*rpm;
+
+    matTa = prod(matK, matInput);
 }
 
+// TODO: delete this is not used
 boost::numeric::ublas::matrix<double> AUVModel::getMatTa()
 {
     matTa = prod(matK, matInput);
@@ -209,7 +212,7 @@ boost::numeric::ublas::matrix<double> AUVModel::getMatJ()
 
 void AUVModel::operator() ( const boost::numeric::ublas::matrix<double>& x , boost::numeric::ublas::matrix<double> &dxdt , double t)
 {
-    dxdt = prod(matA, x) + prod(matB, getMatTa());//prod(matA11, x) + prod(invM, getMatTa() - matg);
+    dxdt = prod(matA, x) + prod(matB, matTa);//prod(matA11, x) + prod(invM, getMatTa() - matg);
 }
 
 struct streaming_observer
