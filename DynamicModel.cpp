@@ -56,7 +56,7 @@ matInput(5, 1), matJ(6, 6), position(6, 1), matG(6, 6), state(12, 1)
     //integrator = new OdeintIntegrator(this, initState, initTime , dt);
 
     // Initializing the matrixes needed for the Dynamic Model of the AUV
-    m = 46.27, W = 453.5, B = 454.5;                                         // W - B should be approximately 1N
+    m = 46.27, W = 453.5, B = 454.5;                                         // B - W should be approximately 1N
     Iy = 18.0, Iz = 18.0, Ix = 0.0;  // I values gotten from simulator see I0 matrix
     Xud = m - 19, Yvd = m - 34, Zwd = m - 34, Kpd = Ix - 0.04, Mqd = Iy - 2.1, Nrd = Iz - 2.1, zG = 0.1, ZG = zG;
 
@@ -85,21 +85,21 @@ matInput(5, 1), matJ(6, 6), position(6, 1), matG(6, 6), state(12, 1)
     finPort = 0.0;
 
         
-    double initL[6*6] = {0, 0, 0, 0, 0, 0,
-                        0, 30*u, 0, 0, 0, -7.7*u,
-                        0, 0, 30*u, 0, 7.7*u, 0,
-                        0, 0, 0, 0, 0, 0,
-                        0, 0, 9.9*u, 0, 3.1*u, 0,
-                        0, -9.9*u, 0, 0, 0, 3.1*u};
+    double initL[6*6] = {0, 0,     0,    0,  0,     0,
+                        0, 30*u,   0,    0,  0,   -7.7*u,
+                        0,  0,    30*u,  0, 7.7*u,  0,
+                        0,  0,     0,    0,  0,     0,
+                        0,  0,    9.9*u, 0, 3.1*u,  0,
+                        0, -9.9*u, 0,    0,  0,    3.1*u};
 
     insertToMatrix(matL, initL);
 
-    double initM[6*6] = {m - Xud, 0, 0, 0, m*zG, 0,
-                        0, m - Yvd, 0, -m*zG, 0, 0,
-                        0, 0, m - Zwd, 0, 0, 0,
-                        0, -(m*zG), 0, Ix - Kpd, 0, 0,
-                        m*zG, 0, 0, 0, Iy - Mqd, 0,
-                        0, 0, 0, 0, 0, Iz - Nrd};
+    double initM[6*6] = {m - Xud,   0,      0,       0,    m*zG,    0,
+                            0,    m - Yvd,  0,    -m*zG,    0,      0,
+                            0,      0,    m - Zwd,   0,     0,      0,
+                            0,    -(m*zG),  0,    Ix - Kpd, 0,      0,
+                           m*zG,    0,      0,       0,   Iy - Mqd, 0,
+                            0,      0,      0,       0,     0,   Iz - Nrd};
     insertToMatrix(matM, initM);
 
     // TODO: Use Thor Fossens G matrix
@@ -124,20 +124,20 @@ matInput(5, 1), matJ(6, 6), position(6, 1), matG(6, 6), state(12, 1)
     insertToMatrix(matG, initG);
 
     // ATH skoða betur gildin fyrir breytistærðinar í C
-    double initC[6*6] = {0, 0, 0, m*zG*r, (m-Zwd)*w, -(m-Yvd)*v,
-                        0, 0, 0, -(m-Zwd)*w, m*zG*r, (m-Xud)*u,
-                        0, 0, 0, -m*ZG*p+(m-Yvd)*v, -m*ZG*q-(m-Xud)*u, 0,
-                        -m*zG*r, (m-Zwd)*w, m*ZG*p-(m-Yvd)*v, 0, (Iz-Nrd)*r, -(Iy-Mqd)*q,
-                        -(m-Zwd)*w, -m*zG*r, m*ZG*q+(m-Xud)*u, -(Iz-Nrd)*r, 0, (Ix-Kpd)*p,
-                        (m-Yvd)*v, -(m-Xud)*u, 0, (Iy-Mqd)*q, -(Ix-Kpd)*p, 0};
+    double initC[6*6] = {0, 0, 0,      m*zG*r,          (m-Zwd)*w,      -(m-Yvd)*v,
+                         0, 0, 0,   -(m-Zwd)*w,           m*zG*r,        (m-Xud)*u,
+                         0, 0, 0, -m*ZG*p+(m-Yvd)*v,  -m*ZG*q-(m-Xud)*u,      0,
+                        -m*zG*r,     (m-Zwd)*w,       m*ZG*p-(m-Yvd)*v,       0,      (Iz-Nrd)*r,  -(Iy-Mqd)*q,
+                        -(m-Zwd)*w,   -m*zG*r,        m*ZG*q+(m-Xud)*u, -(Iz-Nrd)*r,       0,       (Ix-Kpd)*p,
+                        (m-Yvd)*v,  -(m-Xud)*u,             0,           (Iy-Mqd)*q,  -(Ix-Kpd)*p,      0};
     insertToMatrix(matC, initC);
 
-    double initD[6*6] = {-Xu - Xuu*abs(u), 0, 0, 0, 0, 0,
-                        0, -Yv - Yvv*abs(v), 0, 0, 0, -Yr - Yrr*abs(r),
-                        0, 0, -Zw - Zww*abs(w), 0, -Zq - Zqq*abs(q), 0,
-                        0, 0, 0, -Kp - Kpp*abs(p), 0, 0,
-                        0, 0, -Mw - Mww*abs(w), 0, -Mq - Mqq*abs(q), 0,
-                        0, -Nv - Nvv*abs(v), 0, 0, 0, -Nr - Nrr*abs(r)};
+    double initD[6*6] = {-Xu - Xuu*abs(u),        0,              0,                0,             0,                 0,
+                               0,         -Yv - Yvv*abs(v),       0,                0,             0,         -Yr - Yrr*abs(r),
+                               0,                 0,       -Zw - Zww*abs(w),        0,      -Zq - Zqq*abs(q),         0,
+                               0,                 0,              0,        -Kp - Kpp*abs(p),      0,                 0,
+                               0,                 0,       -Mw - Mww*abs(w),        0,      -Mq - Mqq*abs(q),         0,
+                               0,         -Nv - Nvv*abs(v),       0,                0,             0,        -Nr - Nrr*abs(r)};
     insertToMatrix(matD, initD);
 
     InvertMatrix(matM, invM);
@@ -145,7 +145,7 @@ matInput(5, 1), matJ(6, 6), position(6, 1), matG(6, 6), state(12, 1)
     matA11 = -prod(invM, matC + matD + matL);
     matA12 = -prod(invM, matG);
 
-    double fLift = 1/2*seaDensity*airfoilArea*radiusBlade*radiusBlade*2*3.1415;
+    double fLift = 1/2.0*seaDensity*airfoilArea*radiusBlade*radiusBlade*2*3.1415;
     double initK[6*5] = {0.000095, 0, 0, 0, 0,                                  // K_prop = 0.000095 ~= 1/2*seaDesity*airfoilArea*r^2_blade*sin(attackAngle)
                          0, fLift, fLift, 0, 0,
                          0, 0, 0, fLift, fLift,
@@ -168,9 +168,11 @@ matInput(5, 1), matJ(6, 6), position(6, 1), matG(6, 6), state(12, 1)
     subrange(matA, 6,12, 0,6) = matJ;
     subrange(matB, 0,6, 0,6) = invM;
 
-    // probably not needed/The user should start with an input.
-    double initInput[5*1] = {0, 0, 0, 0, 0};
-    insertToMatrix(matInput, initInput);
+    //std::cout << "matB" << std::endl;
+    //printMatrix(matB);
+
+    double initInput[6*1] = {0, 0, 0, 0, 0, 0};
+    insertToMatrix(matTa, initInput);
         
 }
 
@@ -184,6 +186,11 @@ void AUVModel::input(double rpm, double finUp, double finDown, double finStb, do
     matInput = matInput*rpm*rpm;
 
     matTa = prod(matK, matInput);
+
+    // std::cout << "matInput " << std::endl;
+    // std::cout << matInput << std::endl;
+    // std::cout << "matTa " << std::endl;
+    // std::cout << matTa << std::endl;
 }
 
 // TODO: delete this is not used
@@ -212,7 +219,12 @@ boost::numeric::ublas::matrix<double> AUVModel::getMatJ()
 
 void AUVModel::operator() ( const boost::numeric::ublas::matrix<double>& x , boost::numeric::ublas::matrix<double> &dxdt , double t)
 {
-    dxdt = prod(matA, x) + prod(matB, matTa);//prod(matA11, x) + prod(invM, getMatTa() - matg);
+    //std::cout << "matB x matTa" << std::endl;
+    //std::cout << prod(matB, matTa) << std::endl;
+    //std::cout << "matA x x" << std::endl;
+    //std::cout << prod(matA, x) << std::endl;
+
+    dxdt = prod(matA, x) + prod(matB, matTa);    //prod(matA11, x) + prod(invM, getMatTa() - matg);
 }
 
 struct streaming_observer

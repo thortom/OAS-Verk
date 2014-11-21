@@ -14,5 +14,6 @@ if __name__ == '__main__':
 			#skip time
 			continue
 		plot(data[:,0], data[:,idx], label=title[0, idx])
+	xlabel('time [s]');
 	legend()
 	show()
