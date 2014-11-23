@@ -18,21 +18,21 @@ namespace TestOAS{
 
 struct coordinate
 {
-  double x;
-  double depth;
+    double x;
+    double depth;
 };
 
 struct line
 {
-  double x1;
-  double x2;
-  double y1;
-  double y2;
+    double x1;
+    double x2;
+    double y1;
+    double y2;
 };
 
 class BottomModel
 {
-  public:
+public:
     BottomModel() {}
     ~BottomModel();
     /**
@@ -46,7 +46,7 @@ class BottomModel
     double getAltitude(double x, double z);
 
     line getBottomLine(double x);
-  private:
+private:
     std::vector<coordinate*> bottom;
 };
 

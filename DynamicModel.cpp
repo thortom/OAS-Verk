@@ -145,8 +145,8 @@ matInput(5, 1), matJ(6, 6), position(6, 1), matG(6, 6), state(12, 1)
     matA11 = -prod(invM, matC + matD + matL);
     matA12 = -prod(invM, matG);
 
-    double fLift = 1/2.0*seaDensity*airfoilArea*radiusBlade*radiusBlade*2*3.1415;
-    double initK[6*5] = {0.000095, 0, 0, 0, 0,                                  // K_prop = 0.000095 ~= 1/2*seaDesity*airfoilArea*r^2_blade*sin(attackAngle)
+    double fLift = 1.0/2.0*seaDensity*airfoilArea*radiusBlade*radiusBlade*2*3.1415;
+    double initK[6*5] = {0.000095, 0, 0, 0, 0,                                  // K_prop = 0.000095 ~= 1.0/2.0*seaDesity*airfoilArea*r^2_blade*sin(attackAngle)
                          0, fLift, fLift, 0, 0,
                          0, 0, 0, fLift, fLift,
                          0, 0, 0, 0, 0,
@@ -251,8 +251,3 @@ void insertToMatrix(boost::numeric::ublas::matrix<double>& mat, double vec[])
             idx++;
         }
 }
-
-
-
-
-
