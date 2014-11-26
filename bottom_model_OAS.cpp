@@ -31,72 +31,69 @@ namespace TestOAS{
 
 BottomModel::~BottomModel()
 {
-  while(!bottom.empty())
-  {
-    delete bottom.back(), bottom.pop_back();
-  }
+    while(!bottom.empty())
+    {
+        delete bottom.back(), bottom.pop_back();
+    }
 }
 
-void
-BottomModel::readFile(const char* filename)
+void BottomModel::readFile(const char* filename)
 {
-  std::ifstream file;
-  file.open (filename);
-  if (file.fail())
-  {
-    std::cout << "can't open file " << filename << "\n";
-    std::exit(1);
-  }
+    std::ifstream file;
+    file.open (filename);
+    if (file.fail())
+    {
+        std::cout << "can't open file " << filename << "\n";
+        std::exit(1);
+    }
 
-  while (!file.eof())
-  {
-    coordinate* new_coordinate = new coordinate();
-	file >> new_coordinate->x;
-	file >> new_coordinate->depth;
-	bottom.push_back( new_coordinate );
-	//std::cout << "x: " << new_coordinate->x << "depth" << new_coordinate->depth << std::endl;
-  }
-  bottom.pop_back();
-  file.close();
+    while (!file.eof())
+    {
+        coordinate* new_coordinate = new coordinate();
+        file >> new_coordinate->x;
+        file >> new_coordinate->depth;
+        bottom.push_back( new_coordinate );
+        //std::cout << "x: " << new_coordinate->x << "depth" << new_coordinate->depth << std::endl;
+    }
+    bottom.pop_back();
+    file.close();
 }
 
-double
-BottomModel::getAltitude(double x, double z)
+double BottomModel::getAltitude(double x, double z)
 {
-  double ret = 0;
-  double currentDepth;
-  std::vector<coordinate*>::iterator it = bottom.begin();
-  while (it != bottom.end() & ((*it)->x <= x))
-  {																													// TODO: verify if correct
-	if ((it+1) == bottom.end())
-	{
-		ret = (*it)->depth - z;
-		break;
-	}
-	currentDepth = (*it)->depth + (x - (*it)->x)/((*(it+1))->x - (*it)->x)*((*(it+1))->depth - (*it)->depth); 		// Linear interpolation
-    ret = currentDepth - z;
-    it++;
-  }
-  return ret;
+    double ret = 0;
+    double currentDepth;
+    std::vector<coordinate*>::iterator it = bottom.begin();
+    while (it != bottom.end() & ((*it)->x <= x))            // TODO: verify if correct
+    {
+        if ((it+1) == bottom.end())
+        {
+            ret = (*it)->depth - z;
+            break;
+        }
+        currentDepth = (*it)->depth + (x - (*it)->x)/((*(it+1))->x - (*it)->x)*((*(it+1))->depth - (*it)->depth);     // Linear interpolation
+        ret = currentDepth - z;
+        it++;
+    }
+    return ret;
 }
 
-line
-BottomModel::getBottomLine(double x)
+line BottomModel::getBottomLine(double x)
 {
-  line ret; 	// {x, x+1, 0.0, 0.0};
-  ret.x1 = x;
-  ret.x2 = x+1;
-  ret.y1 = 0.0;
-  ret.y2 = 0.0;
+    line ret;   // {x, x+1, 0.0, 0.0};
+    ret.x1 = x;
+    ret.x2 = x+1;
+    ret.y1 = 0.0;
+    ret.y2 = 0.0;
 
-  std::vector<coordinate*>::iterator it = bottom.begin();
-  while (it != bottom.end() && (*it)->x < (bottom.size() - 1) && ((*it)->x <= x))
-  {
-    ret.y1 = (*it)->depth;
-    it++;
-  }
-  ret.y2 = (*it)->depth;
-  return ret;
+    std::vector<coordinate*>::iterator it = bottom.begin();
+    while (it != bottom.end() && (*it)->x < (bottom.size() - 1) && ((*it)->x <= x))
+    {
+        ret.y1 = (*it)->depth;
+        it++;
+    }
+    ret.y2 = (*it)->depth;
+    return ret;
 }
 
 } // End of namespace TestOAS
