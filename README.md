@@ -13,5 +13,6 @@ The required setup for a full scale testing framework is:
 *	Dynamic model of the Gavia.
 *	Environment to run the tests on.
 *	Be able to plot and analyze the results.
+
 See Info.pdf for more information on setup and usage of the code.
 
