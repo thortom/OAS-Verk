@@ -168,8 +168,10 @@ matInput(5, 1), matJ(6, 6), position(6, 1), matG(6, 6), state(12, 1)
     subrange(matA, 6,12, 0,6) = matJ;
     subrange(matB, 0,6, 0,6) = invM;
 
-    //std::cout << "matB" << std::endl;
-    //printMatrix(matB);
+    std::cout << "matB" << std::endl;
+    printMatrix(matB);
+    std::cout << "matA" << std::endl;
+    printMatrix(matA);
 
     double initInput[6*1] = {0, 0, 0, 0, 0, 0};
     insertToMatrix(matTa, initInput);
@@ -251,3 +253,4 @@ void insertToMatrix(boost::numeric::ublas::matrix<double>& mat, double vec[])
             idx++;
         }
 }
+

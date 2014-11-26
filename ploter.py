@@ -94,7 +94,7 @@ def readAndSubplot(array, title, count = None):
     x = title.index('x_pos')
     fig = plt.figure()
     for i in range(count):
-        if (i == 0):
+        if (i == 0 or i == 1):
             continue
         plt.plot(array[1:size, x], array[1:size, i], label=title[i])
     plt.xlabel(title[x])

@@ -22,7 +22,7 @@ int main(int argc, char **argv)
     file.open ("DynamicModel.csv");
     file << "t" << ',' << "u" << ',' << "v" << ',' << "w" << ',' << "p" << ',' << "q" << ',' << "r" << ',' << "y" << ',' << "z" << ',' << "phi" << ',' << "theta" << ',' << "psi" << std::endl;
     //file << "t" << ',' << "u" << ',' << "v" << ',' << "w" << std::endl;
-    int numbSteps = 100;
+    int numbSteps = 1000;
     for(size_t i=0 ; t<numbSteps ; ++i,t+=dt )
     {
         integrator->dostep(model);      // TODO: change to model->doWork() {upDataMatrixes(matJ, matTa), integrator->dostep(model)}
@@ -35,13 +35,11 @@ int main(int argc, char **argv)
         
         //model->input(surge/0.0025, 80*3.1415/180.0, 80*3.1415/180.0, 80*3.1415/180.0, 80*3.1415/180.0);
         
-        model->input(surge/0.0025, 0, 0, 60*3.1415/180.0, 60*3.1415/180.0); //surge/0.0025, 0, 0, 0, 0);
+        model->input(surge/0.0025, 0, 0, 20*3.1415/180.0, 20*3.1415/180.0); //surge/0.0025, 0, 0, 0, 0);
         
     }
     file.close();
     delete integrator;
-
-    std::cout << surge/0.0025 << std::endl;
 
     return 0;
 }

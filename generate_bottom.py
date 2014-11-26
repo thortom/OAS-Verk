@@ -42,11 +42,11 @@ if __name__ == '__main__':
     # TODO: delete this:
     # ----------------- #
     depth = 10
-    size = 400
+    size = 4000
     array = []
     for i in range(size):
-        if (i == round(size/2.0)):
-            depth = depth*0.7
+        if (i == round(size*0.7)):
+            depth = depth*0.8
         array.append(depth)
     print "This one overwrites the other"
     print array
