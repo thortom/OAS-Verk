@@ -91,37 +91,23 @@ double NavigationModel::getRange(const coordinate auvPosition, BottomModel& bott
 
     for (int i = 0; i < numbSonarBeams; i++)
     {
-        //std::cout << "sonarBeams[" << i <<  "].getLine()" << std::endl;
         sonarLine = sonarBeams[i].getLine(auvPosition);
         while (x <= (auvPosition.x + maxRange))
         {
-            //std::cout << "bottom.getBottomLine(" << x << ")" << std::endl;
 
             bottomLine = bottom.getBottomLine(x);
 
-            if (LineSegmentIntersection(sonarLine.x1, sonarLine.y1, sonarLine.x2, sonarLine.y2,                             // TODO: Fix to line1, line2
+            if (LineSegmentIntersection(sonarLine.x1, sonarLine.y1, sonarLine.x2, sonarLine.y2,
                     bottomLine.x1, bottomLine.y1, bottomLine.x2, bottomLine.y2, &intersectionX, &intersectionY))
             {
-                //std::cout << "sonarLine: " << std::endl;
-                //std::cout << " x1: " << sonarLine.x1 << " y1: " << sonarLine.y1 << " x2: " << sonarLine.x2 << " y2: " << sonarLine.y2 << std::endl;
-                //std::cout << "bottomLine: " << std::endl;
-                //std::cout << " x1: " << bottomLine.x1 << " y1: " << bottomLine.y1 << " x2: " << bottomLine.x2 << " y2: " << bottomLine.y2 << "\n\n";
-
-                //std::cout << "x: " << intersectionX << " y: " << intersectionY << std::endl;
-
                 currentRange = intersectionX - auvPosition.x;
 
-                //std::cout << "currentRange = " << currentRange << std::endl;
                 if (currentRange < minRange)
                 {
                     minRange = currentRange;
-                    //std::cout << "minRange: " << minRange << std::endl;
                 }
-                //break;
             }
             x++;
-
-            //std::cout << "\n" << std::endl;
         }
         x = auvPosition.x;
     }
@@ -165,11 +151,9 @@ int NavigationModel::IsPointInBoundingBox(double x1, double y1, double x2, doubl
         bottom = y2;
     }
 
-    //std::cout << "left " << left << " right " << right << " top " << top << " bottom " << bottom << std::endl;
 
-    if( (px >= left) && (px <= right) && (py <= top) && (py >= bottom) )                                        // +/-
+    if( (px >= left) && (px <= right) && (py <= top) && (py >= bottom) )
     {
-        //std::cout << "true" << std::endl;
         return 1;
     }
     else
@@ -242,12 +226,10 @@ int NavigationModel::LineSegmentIntersection(double l1x1, double l1y1, double l1
     {
         *intersection_X = (c2 - c1) / (m1 - m2);
         *intersection_Y = m1 * *intersection_X + c1;
-        //std::cout << "intersecting: " << "X: " << *intersection_X << " Y: " << *intersection_Y << std::endl;
     }
     if(IsPointInBoundingBox(l1x1, l1y1, l1x2, l1y2, *intersection_X, *intersection_Y) == 1 &&
         IsPointInBoundingBox(l2x1, l2y1, l2x2, l2y2, *intersection_X, *intersection_Y) == 1)
     {
-        //std::cout << "IsPointInBoundingBox() => true" << std::endl;
         return 1;
     }
     else

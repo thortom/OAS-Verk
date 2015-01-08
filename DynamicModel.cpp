@@ -102,17 +102,6 @@ matInput(5, 1), matJ(6, 6), position(6, 1), matG(6, 6), state(12, 1)
                             0,      0,      0,       0,     0,   Iz - Nrd};
     insertToMatrix(matM, initM);
 
-    // TODO: Use Thor Fossens G matrix
-    /*
-    double initg[6*1] = {(W - B)*sin(theta),
-                        -(W - B)*cos(theta)*sin(phi),
-                        -(W - B)*cos(theta)*cos(phi),
-                        zG*W*cos(theta)*sin(phi),
-                        zG*W*sin(theta),
-                        0};
-    insertToMatrix(matg, initg);
-    */
-
     // This G matrix is from Guidance and Control of Ocean Vehicles, Thor I. Fossen on page 101.
     // Set zB = xG = xB = yG = yB = 0
     double initG[6*6] = {0, 0, 0,   0,  W-B, 0,
@@ -168,11 +157,6 @@ matInput(5, 1), matJ(6, 6), position(6, 1), matG(6, 6), state(12, 1)
     subrange(matA, 6,12, 0,6) = matJ;
     subrange(matB, 0,6, 0,6) = invM;
 
-    std::cout << "matB" << std::endl;
-    printMatrix(matB);
-    std::cout << "matA" << std::endl;
-    printMatrix(matA);
-
     double initInput[6*1] = {0, 0, 0, 0, 0, 0};
     insertToMatrix(matTa, initInput);
         
@@ -189,10 +173,6 @@ void AUVModel::input(double rpm, double finUp, double finDown, double finStb, do
 
     matTa = prod(matK, matInput);
 
-    // std::cout << "matInput " << std::endl;
-    // std::cout << matInput << std::endl;
-    // std::cout << "matTa " << std::endl;
-    // std::cout << matTa << std::endl;
 }
 
 // TODO: delete this is not used
@@ -221,11 +201,6 @@ boost::numeric::ublas::matrix<double> AUVModel::getMatJ()
 
 void AUVModel::operator() ( const boost::numeric::ublas::matrix<double>& x , boost::numeric::ublas::matrix<double> &dxdt , double t)
 {
-    //std::cout << "matB x matTa" << std::endl;
-    //std::cout << prod(matB, matTa) << std::endl;
-    //std::cout << "matA x x" << std::endl;
-    //std::cout << prod(matA, x) << std::endl;
-
     dxdt = prod(matA, x) + prod(matB, matTa);    //prod(matA11, x) + prod(invM, getMatTa() - matg);
 }
 
@@ -253,4 +228,3 @@ void insertToMatrix(boost::numeric::ublas::matrix<double>& mat, double vec[])
             idx++;
         }
 }
-

@@ -108,7 +108,7 @@ if __name__ == "__main__":
     auv_posX = 0
     auv_posY = 0
     dataFile = "example.txt"                # TODO: change the name of this file or take the file in as an input from user
-    array, title = readData(dataFile)       # Loses the first point, assumes that the first point is the title/data name
+    array, title = readData(dataFile)       # Loses the first row, assumes that the first row is the title/data name
 
     case = 0
     if len(sys.argv) == 2:
